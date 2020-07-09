@@ -29,7 +29,8 @@ const defaultOpts = {
     verbose: false,
     silent: false,
     initial: false,
-    command: null
+    command: null,
+    depth:99
 };
 
 const VERSION = `chokidar-cli: ${version}\nchokidar: ${chokidarVersion}`;
@@ -118,6 +119,11 @@ const {argv} = yargs
         describe: 'When set, internal messages of chokidar-cli won\'t be written.',
         default: defaultOpts.silent,
         type: 'boolean'
+    })
+ .option('depth', {
+        describe: 'If set, limits how many levels of subdirectories will be traversed.',
+        default: defaultOpts.silent,
+        type: 'number'
     })
     .help('h')
     .alias('h', 'help')
