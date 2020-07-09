@@ -120,9 +120,9 @@ const {argv} = yargs
         default: defaultOpts.silent,
         type: 'boolean'
     })
- .option('depth', {
+    .option('depth', {
         describe: 'If set, limits how many levels of subdirectories will be traversed.',
-        default: defaultOpts.silent,
+        default: defaultOpts.depth,
         type: 'number'
     })
     .help('h')
@@ -197,7 +197,9 @@ function createChokidarOpts(opts) {
         usePolling: opts.polling,
         interval: opts.pollInterval,
         binaryInterval: opts.pollIntervalBinary,
-        ignoreInitial: !opts.initial
+        ignoreInitial: !opts.initial,
+        depth:opts.depth
+
     };
 
     if (opts.ignore) {
