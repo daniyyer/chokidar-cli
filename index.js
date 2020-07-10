@@ -30,7 +30,8 @@ const defaultOpts = {
     silent: false,
     initial: false,
     command: null,
-    depth:99
+    depth:99,
+    watchReady:false
 };
 
 const VERSION = `chokidar-cli: ${version}\nchokidar: ${chokidarVersion}`;
@@ -125,6 +126,11 @@ const {argv} = yargs
         default: defaultOpts.depth,
         type: 'number'
     })
+    .option('watch-ready', {
+        describe: 'If set, ready event will be watch.',
+        default: defaultOpts.watchReady,
+        type: 'boolean'
+    })
     .help('h')
     .alias('h', 'help')
     .alias('v', 'version')
@@ -180,10 +186,17 @@ function startWatching(opts) {
         console.error(error.stack);
     });
 
-    watcher.once('ready', () => {
+    watcher.once('ready', (event, path) => {
         const list = opts.patterns.join('", "');
         if (!opts.silent) {
             console.error('Watching', `"${list}" ..`);
+        }
+        if (opts.command && opts.watchReady) {
+            debouncedRun(
+                opts.command
+                    .replace(/\{path\}/ig, path)
+                    .replace(/\{event\}/ig, event)
+            );
         }
     });
 }
@@ -198,8 +211,8 @@ function createChokidarOpts(opts) {
         interval: opts.pollInterval,
         binaryInterval: opts.pollIntervalBinary,
         ignoreInitial: !opts.initial,
-        depth:opts.depth
-
+        depth:opts.depth,
+        watchReady:opts.watchReady
     };
 
     if (opts.ignore) {
